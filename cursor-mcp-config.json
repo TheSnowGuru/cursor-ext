@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cursor-inspector": {
+      "command": "node",
+      "args": ["/Users/shay/Documents/GitHub/cursor-ext/mcp-server.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

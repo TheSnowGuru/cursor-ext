@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+</head>
+<body>
+    <canvas id="canvas16" width="16" height="16"></canvas>
+    <canvas id="canvas48" width="48" height="48"></canvas>
+    <canvas id="canvas128" width="128" height="128"></canvas>
+    
+    <script>
+        function createIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#007acc';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Rounded corners
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.15);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // White lines (representing code)
+            ctx.fillStyle = 'white';
+            const lineHeight = size * 0.05;
+            const lineSpacing = size * 0.1;
+            const startY = size * 0.3;
+            
+            for (let i = 0; i < 4; i++) {
+                const y = startY + i * (lineHeight + lineSpacing);
+                const width = size * (0.5 + Math.random() * 0.3);
+                ctx.fillRect(size * 0.25, y, width, lineHeight);
+            }
+            
+            // Orange circle with checkmark
+            const circleSize = size * 0.25;
+            const circleX = size * 0.75;
+            const circleY = size * 0.75;
+            
+            ctx.fillStyle = '#ff6b35';
+            ctx.beginPath();
+            ctx.arc(circleX, circleY, circleSize, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // White checkmark
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.02;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(circleX - circleSize * 0.3, circleY);
+            ctx.lineTo(circleX - circleSize * 0.1, circleY + circleSize * 0.2);
+            ctx.lineTo(circleX + circleSize * 0.3, circleY - circleSize * 0.2);
+            ctx.stroke();
+        }
+        
+        // Create icons
+        createIcon('canvas16', 16);
+        createIcon('canvas48', 48);
+        createIcon('canvas128', 128);
+        
+        // Download function
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Add download buttons
+        setTimeout(() => {
+            const body = document.body;
+            
+            const btn16 = document.createElement('button');
+            btn16.textContent = 'Download icon16.png';
+            btn16.onclick = () => downloadIcon('canvas16', 'icon16.png');
+            body.appendChild(btn16);
+            
+            const btn48 = document.createElement('button');
+            btn48.textContent = 'Download icon48.png';
+            btn48.onclick = () => downloadIcon('canvas48', 'icon48.png');
+            body.appendChild(btn48);
+            
+            const btn128 = document.createElement('button');
+            btn128.textContent = 'Download icon128.png';
+            btn128.onclick = () => downloadIcon('canvas128', 'icon128.png');
+            body.appendChild(btn128);
+        }, 100);
+    </script>
+</body>
+</html>

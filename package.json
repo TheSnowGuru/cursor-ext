@@ -1,0 +1,35 @@
+{
+  "name": "cursor-inspector-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Cursor Code Inspector Chrome Extension",
+  "type": "module",
+  "main": "mcp-server.js",
+  "bin": {
+    "cursor-inspector-mcp": "./mcp-server.js"
+  },
+  "scripts": {
+    "start": "node mcp-server.js",
+    "dev": "node --watch mcp-server.js",
+    "build": "echo 'No build step needed'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "mcp",
+    "cursor",
+    "chrome-extension",
+    "html-inspector",
+    "code-analysis"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cursor-ext.git"
+  }
+}
