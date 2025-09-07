@@ -1,6 +1,6 @@
 # Cursor Code Inspector Chrome Extension
 
-A Chrome extension that allows you to inspect HTML elements on web pages and send them to Cursor for analysis.
+A Chrome extension that allows you to inspect HTML elements on web pages and send them to Cursor for analysis via MCP (Model Context Protocol) integration.
 
 ## Features
 
@@ -8,27 +8,44 @@ A Chrome extension that allows you to inspect HTML elements on web pages and sen
 - **Visual Highlighting**: Elements are highlighted when you hover over them during inspection
 - **HTML Extraction**: Automatically extracts the full HTML code of selected elements
 - **User Input**: Add your own message or question about the element
-- **Workspace Detection**: Specify your Cursor workspace path for better context
-- **Smart Suggestions**: Auto-suggests workspace paths based on the current website
-- **Cursor Integration**: Sends formatted data to Cursor (currently via clipboard)
+- **Two-Button Interface**: Choose between "Copy to Clipboard" or "Send to Cursor"
+- **MCP Integration**: Direct communication with Cursor via Model Context Protocol
+- **Fallback Support**: Automatic fallback to clipboard when MCP server unavailable
+- **Smart Error Handling**: Clear user feedback and instructions
 
 ## Installation
 
-1. **Download the Extension**:
-   - Clone or download this repository
-   - Ensure you have all the files in the extension directory
+### Quick Start (Chrome Extension Only)
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/TheSnowGuru/cursor-ext.git
+   cd cursor-ext
+   ```
 
-2. **Create Icons** (Required):
-   - Create an `icons` folder in the extension directory
-   - Create three PNG files: `icon16.png`, `icon48.png`, and `icon128.png`
-   - You can use the provided `icon.svg` as a reference
-   - Recommended sizes: 16x16, 48x48, and 128x128 pixels
-
-3. **Load in Chrome**:
+2. **Load in Chrome**:
    - Open Chrome and go to `chrome://extensions/`
    - Enable "Developer mode" in the top right
    - Click "Load unpacked" and select the extension directory
    - The extension should now appear in your extensions list
+
+### Full Setup (With MCP Integration)
+For direct communication with Cursor, follow the complete setup guide:
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Configure Cursor MCP**:
+   - Add the MCP server to your Cursor configuration
+   - See `COMPLETE_SETUP.md` for detailed instructions
+
+3. **Start MCP Server**:
+   ```bash
+   node mcp-http-bridge.js
+   ```
+
+4. **Load Chrome Extension** (as above)
 
 ## Usage
 
@@ -39,10 +56,11 @@ A Chrome extension that allows you to inspect HTML elements on web pages and sen
 4. **A modal dialog opens** with:
    - Element information displayed
    - Text area for your message
-   - "Copy to Clipboard" button
-5. **Enter your message** and click "Copy to Clipboard"
-6. **Everything is copied** to your clipboard in a formatted way
-7. **Paste into Cursor** and you're done!
+   - Two buttons: "Copy to Clipboard" and "Send to Cursor"
+5. **Enter your message** and choose your action:
+   - **"Copy to Clipboard"**: Copies formatted data to clipboard
+   - **"Send to Cursor"**: Attempts MCP communication, falls back to clipboard
+6. **Paste into Cursor** (if using clipboard) or see direct integration message
 
 ### What Gets Copied
 The extension copies a formatted message containing:
@@ -56,44 +74,61 @@ The extension copies a formatted message containing:
 
 ```
 cursor-ext/
-├── manifest.json          # Extension configuration
-├── background.js          # Background service worker
-├── content.js            # Content script for web pages
-├── test.html             # Test page for the extension
-├── create_icons.html     # Icon generator tool
-├── icons/                # Extension icons (optional)
-│   └── icon.svg          # SVG reference
-└── README.md             # This file
+├── manifest.json              # Extension configuration
+├── background.js              # Background service worker
+├── content.js                # Content script for web pages
+├── mcp-server.js             # MCP server for Cursor integration
+├── mcp-http-bridge.js        # HTTP bridge for Chrome extension
+├── package.json              # Node.js dependencies
+├── test.html                 # Test page for the extension
+├── create_icons.html         # Icon generator tool
+├── icons/                    # Extension icons
+│   ├── icon.svg              # SVG reference
+│   ├── icon16.png            # 16x16 icon
+│   ├── icon48.png            # 48x48 icon
+│   └── icon128.png           # 128x128 icon
+├── COMPLETE_SETUP.md         # Complete setup instructions
+├── MCP_SETUP.md              # MCP-specific setup
+└── README.md                 # This file
 ```
 
 ## How It Works
 
 1. **Background Script** (`background.js`):
    - Creates the right-click context menu
-   - Handles communication between different parts of the extension
+   - Handles MCP communication with Cursor
+   - Manages fallback to clipboard when MCP unavailable
 
 2. **Content Script** (`content.js`):
    - Runs on web pages
    - Handles element inspection and highlighting
-   - Shows modal dialog for user input
+   - Shows modal dialog with two-button interface
    - Extracts HTML code from selected elements
-   - Copies formatted data to clipboard
+   - Sends data to background script for processing
+
+3. **MCP Server** (`mcp-server.js`):
+   - Implements Model Context Protocol for Cursor integration
+   - Receives messages from Chrome extension via HTTP bridge
+   - Processes and forwards data to Cursor
+
+4. **HTTP Bridge** (`mcp-http-bridge.js`):
+   - Acts as communication layer between Chrome extension and MCP server
+   - Handles CORS and HTTP requests
+   - Provides fallback error handling
 
 ## Integration with Cursor
 
-Currently, the extension copies formatted data to the clipboard. For full integration with Cursor, you would need to:
+The extension supports two integration methods:
 
-1. **Use Cursor's API** (if available):
-   - Replace the clipboard functionality with direct API calls
-   - Implement authentication if required
+### 1. MCP Integration (Recommended)
+- **Direct Communication**: Uses Model Context Protocol for real-time communication
+- **Automatic Setup**: Configure once in Cursor's MCP settings
+- **Real-time Feedback**: Immediate confirmation when messages are sent
 
-2. **Use Cursor's Extension API**:
-   - If Cursor supports Chrome extension communication
-   - Send messages directly to the Cursor application
-
-3. **File-based Integration**:
-   - Write data to a file that Cursor can monitor
-   - Use a shared file system or database
+### 2. Clipboard Fallback
+- **Universal Compatibility**: Works with any Cursor setup
+- **Simple Operation**: Just paste the copied data into Cursor
+- **No Configuration**: Works out of the box
 
 ## Customization
 
@@ -119,6 +154,16 @@ To modify the extension:
 2. Go to `chrome://extensions/`
 3. Click the refresh icon on the extension card
 4. Test your changes
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Repository
+
+- **GitHub**: https://github.com/TheSnowGuru/cursor-ext
+- **Issues**: Report bugs or request features on GitHub Issues
+- **Discussions**: Join the conversation in GitHub Discussions
 
 ## License
 
